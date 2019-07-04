@@ -177,10 +177,11 @@ internal class TradeHandler(private val registry: PluginRegistry.Registrar) {
     }
 
     private fun intToFailedMode(type: Int) = when (type) {
+        0 -> AlibcFailModeType.AlibcNativeFailModeJumpH5
         1 -> AlibcFailModeType.AlibcNativeFailModeJumpDOWNLOAD
         2 -> AlibcFailModeType.AlibcNativeFailModeJumpBROWER
         3 -> AlibcFailModeType.AlibcNativeFailModeNONE
-        else -> AlibcFailModeType.AlibcNativeFailModeNONE
+        else -> AlibcFailModeType.AlibcNativeFailModeJumpH5
     }
 }
 
