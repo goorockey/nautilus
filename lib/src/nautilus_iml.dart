@@ -12,8 +12,6 @@ const _keyResult = "result";
 const _keyErrorCode = "errorCode";
 const _keyErrorMessage = "errorMessage";
 
-
-
 Future<LoginResult> login() async {
   Map result = await _channel.invokeMethod("login");
   bool isSuccess = result[_keyResult];
@@ -26,9 +24,8 @@ Future<LoginResult> login() async {
         nick: userMap["nick"],
         openId: userMap["openId"],
         openSid: userMap["openSid"],
-        topAccessToken:userMap["topAccessToken"],
-        topAuthCode:userMap["topAuthCode"]
-        );
+        topAccessToken: userMap["topAccessToken"],
+        topAuthCode: userMap["topAuthCode"]);
     loginResult = LoginResult(
         isSuccessful: isSuccess,
         platform: result[_keyPlatform],
@@ -63,8 +60,8 @@ Future<User> getUser() async {
         nick: userMap["nick"],
         openId: userMap["openId"],
         openSid: userMap["openSid"],
-        topAccessToken:userMap["topAccessToken"],
-        topAuthCode:userMap["topAuthCode"]);
+        topAccessToken: userMap["topAccessToken"],
+        topAuthCode: userMap["topAuthCode"]);
   }
 
   return user;
@@ -80,9 +77,22 @@ Future<Map> logout() async {
 }
 
 Future<InitAsyncResult> initTradeAsync(
-    {bool debuggable = false, String version}) async {
-  Map result = await _channel.invokeMethod(
-      "initTradeAsync", {"debuggable": debuggable, "version": version});
+    {bool debuggable = false, String version, TaoKeParams taoKeParams}) async {
+  Map taoKe;
+  if (taoKeParams != null) {
+    taoKe = {
+      "taoKeParamsPid": taoKeParams.pid ?? "",
+      "taoKeParamsSubPid": taoKeParams.subPid ?? "",
+      "taoKeParamsUnionId": taoKeParams.unionId ?? "",
+      "taoKeParamsAdzoneId": taoKeParams.adzoneId ?? "",
+      "taoKeParamsExtParams": taoKeParams.extParams ?? {}
+    };
+  }
+  Map result = await _channel.invokeMethod("initTradeAsync", {
+    "debuggable": debuggable,
+    "version": version,
+    "taoKeParams": taoKe,
+  });
   assert(debuggable != null);
   return InitAsyncResult(
       platform: result[_keyPlatform],
@@ -91,47 +101,42 @@ Future<InitAsyncResult> initTradeAsync(
       errorCode: result[_keyErrorCode]);
 }
 
-
 ///[needPush] only works on iOS
 ///[schemeType] supports 'tmall_scheme' and 'taobao_scheme','tmall_scheme' as default
 ///By passing a non-null [taoKeParams],we mean it's a TaoKe.
-Future<TradeResult> openItemDetail({@required String itemID,
-  String backUrl="",
-  Map<String, String> extParams,
-  TaoKeParams taoKeParams,
-  bool needPush = false,
-  String schemeType = "tmall_scheme",
-  OpenType openType = OpenType.AUTO,
-  OpenNativeFailedMode openNativeFailedMode =
-      OpenNativeFailedMode.JUMP_H5}) async {
-  assert(needPush != null ||
-      openType != null ||
-      openNativeFailedMode != null);
-
+Future<TradeResult> openItemDetail(
+    {@required String itemID,
+    String backUrl = "",
+    Map<String, String> extParams,
+    TaoKeParams taoKeParams,
+    bool needPush = false,
+    String schemeType = "tmall_scheme",
+    OpenType openType = OpenType.AUTO,
+    OpenNativeFailedMode openNativeFailedMode =
+        OpenNativeFailedMode.JUMP_H5}) async {
+  assert(needPush != null || openType != null || openNativeFailedMode != null);
 
   Map taoKe;
   if (taoKeParams != null) {
     taoKe = {
-      "taoKeParamsPid": taoKeParams.pid??"",
-      "taoKeParamsSubPid": taoKeParams.subPid??"",
-      "taoKeParamsUnionId": taoKeParams.unionId??"",
-      "taoKeParamsAdzoneId": taoKeParams.adzoneId??"",
-      "taoKeParamsExtParams": taoKeParams.extParams??{}
+      "taoKeParamsPid": taoKeParams.pid ?? "",
+      "taoKeParamsSubPid": taoKeParams.subPid ?? "",
+      "taoKeParamsUnionId": taoKeParams.unionId ?? "",
+      "taoKeParamsAdzoneId": taoKeParams.adzoneId ?? "",
+      "taoKeParamsExtParams": taoKeParams.extParams ?? {}
     };
   }
 
-
   Map des = {
     "itemID": itemID,
-    "backUrl": backUrl==null?"":backUrl,
+    "backUrl": backUrl == null ? "" : backUrl,
     "extParams": extParams,
     "needPush": needPush,
     "openType": openType.index,
     "schemeType": schemeType,
     "openNativeFailedMode": openNativeFailedMode.index,
-    "taoKeParams":taoKe
+    "taoKeParams": taoKe
   };
-
 
   Map result = await _channel.invokeMethod("openItemDetail", des);
 
@@ -149,46 +154,42 @@ Future<TradeResult> openItemDetail({@required String itemID,
       errorMessage: result[_keyErrorMessage]);
 }
 
-
 ///[needPush] only works on iOS
 ///[schemeType] supports 'tmall_scheme' and 'taobao_scheme','tmall_scheme' as default
 ///By passing a non-null [taoKeParams],we mean it's a TaoKe.
-Future<TradeResult> openUrl({@required String pageUrl,
-  String backUrl="",
-  Map<String, String> extParams,
-  TaoKeParams taoKeParams,
-  bool needPush = false,
-  String schemeType = "tmall_scheme",
-  OpenType openType = OpenType.AUTO,
-  OpenNativeFailedMode openNativeFailedMode =
-      OpenNativeFailedMode.JUMP_H5}) async {
-  assert(needPush != null ||
-      openType != null ||
-      openNativeFailedMode != null);
-
+Future<TradeResult> openUrl(
+    {@required String pageUrl,
+    String backUrl = "",
+    Map<String, String> extParams,
+    TaoKeParams taoKeParams,
+    bool needPush = false,
+    String schemeType = "tmall_scheme",
+    OpenType openType = OpenType.AUTO,
+    OpenNativeFailedMode openNativeFailedMode =
+        OpenNativeFailedMode.JUMP_H5}) async {
+  assert(needPush != null || openType != null || openNativeFailedMode != null);
 
   Map taoKe;
   if (taoKeParams != null) {
     taoKe = {
-      "taoKeParamsPid": taoKeParams.pid??"",
-      "taoKeParamsSubPid": taoKeParams.subPid??"",
-      "taoKeParamsUnionId": taoKeParams.unionId??"",
-      "taoKeParamsAdzoneId": taoKeParams.adzoneId??"",
-      "taoKeParamsExtParams": taoKeParams.extParams??{}
+      "taoKeParamsPid": taoKeParams.pid ?? "",
+      "taoKeParamsSubPid": taoKeParams.subPid ?? "",
+      "taoKeParamsUnionId": taoKeParams.unionId ?? "",
+      "taoKeParamsAdzoneId": taoKeParams.adzoneId ?? "",
+      "taoKeParamsExtParams": taoKeParams.extParams ?? {}
     };
   }
 
   Map des = {
     "pageUrl": pageUrl,
-    "backUrl": backUrl==null?"":backUrl,
+    "backUrl": backUrl == null ? "" : backUrl,
     "extParams": extParams,
     "needPush": needPush,
     "openType": openType.index,
     "schemeType": schemeType,
-    "taoKeParams":taoKe,
+    "taoKeParams": taoKe,
     "openNativeFailedMode": openNativeFailedMode.index
   };
-
 
   Map result = await _channel.invokeMethod("openUrl", des);
 

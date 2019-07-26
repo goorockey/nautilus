@@ -19,8 +19,13 @@
         [[AlibcTradeSDK sharedInstance] setIsvVersion:version];
     }
 
-
     [[AlibcTradeSDK sharedInstance] asyncInitWithSuccess:^{
+        AlibcTradeTaokeParams *taoKeParams = nil;
+        taoKeParams = [self buildTaoKeParam:call];
+        if (taoKeParams != nil) {
+            [[AlibcTradeSDK sharedInstance] setTaokeParams:taoKeParams];
+        }
+
         result(@{nautilusKeyPlatform: nautilusKeyIOS, nautilusKeyResult: @YES});
     }                                            failure:^(NSError *error) {
         result(@{nautilusKeyPlatform: nautilusKeyIOS, nautilusKeyResult: @NO, nautilusKeyErrorCode: @(error.code), nautilusKeyErrorMessage: error.description});
